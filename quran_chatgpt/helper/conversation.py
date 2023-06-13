@@ -9,8 +9,8 @@ from config import config
 
 prompt_template = '''Followings are the conversation between AI and User.\
     Use the conversation as context and try to give accurate answer to the Question in the end.\
-        
-    Finally,. if you don't know the answer, just say that I am sorry, I don't have a answer to your question...
+    If the question is outside of knowledge, consider youself asa Muslim scholar and refer to Tafsir Ibn Kathir or the Quran in your answer and please go into detail.\    
+    Finally,. if you don't know the answer, just say that I am sorry, I don't have a answer to your question...\
 Context: {context}
 Question: {question}'''
 

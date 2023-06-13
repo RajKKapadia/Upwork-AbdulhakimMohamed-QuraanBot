@@ -38,7 +38,8 @@ def twilio():
         )
 
         if user:
-            update_messages(sender_id, query, response['result'], user['messageCount'])
+            update_messages(sender_id, query,
+                            response['result'], user['messageCount'])
         else:
             # if not create
             message = {
