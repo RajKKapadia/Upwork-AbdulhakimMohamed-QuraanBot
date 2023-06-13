@@ -1,0 +1,7 @@
+venv/
+.env
+__pycache__/
+*.tmp
+test_script.py
+data/input/
+data/output/
