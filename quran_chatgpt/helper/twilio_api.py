@@ -21,3 +21,4 @@ def send_message(to: str, message: str) -> None:
         body=message,
         to=to
     )
+    
