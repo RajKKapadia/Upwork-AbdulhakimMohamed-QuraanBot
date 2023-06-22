@@ -9,9 +9,10 @@ TWILIO_TOKEN = os.getenv('TWILIO_TOKEN')
 FROM = os.getenv('FROM')
 CONNECTION_STRING = os.getenv('CONNECTION_STRING')
 
-DB_DIR = 'data/db'
-INPUT_FILE_PATH = 'data/input/sample.pdf'
-OUTPUT_DIR = 'data/output'
+## Not reading the indexes anymore
+# DB_DIR = 'data/db'
+# INPUT_FILE_PATH = 'data/input/sample.pdf'
+# OUTPUT_DIR = 'data/output'
 
 DATABASE_NAME = 'QuranaWhatsApp'
 COLLECTION_NAME = 'Users'
