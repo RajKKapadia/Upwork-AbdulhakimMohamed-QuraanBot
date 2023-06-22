@@ -31,7 +31,6 @@ def twilio():
         # TODO
         # get the user
         user = get_user(sender_id)
-        logger.info(user)
 
         # create chat_history from the previous conversations
         if user:
