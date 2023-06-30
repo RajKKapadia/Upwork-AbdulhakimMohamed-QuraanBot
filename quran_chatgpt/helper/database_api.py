@@ -84,3 +84,30 @@ def get_user(sender_id: str) -> Any:
     if not result:
         None
     return result
+
+
+def update_user(sender_id: int, update: dict) -> bool:
+    '''
+    Update messages for the user and reduce the messages_count by one
+
+    Parameters:
+        - sender_id(int): user telegram id
+        - update(dict): update to push to the record
+
+    Returns:
+        - bool, 0 for failure and 1 for success
+    '''
+
+    result = user_collection.find_one_and_update(
+        {
+            'senderId': sender_id
+        },
+        {
+            '$set': update
+        }
+    )
+
+    if not result:
+        return False
+    else:
+        return True
