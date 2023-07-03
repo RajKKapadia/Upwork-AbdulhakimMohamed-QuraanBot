@@ -15,10 +15,13 @@ def send_message(to: str, message: str) -> None:
     Returns:
         - None
     '''
-
-    _ = client.messages.create(
-        from_=config.FROM,
-        body=message,
-        to=to
-    )
+    try:
+        _ = client.messages.create(
+            from_=config.FROM,
+            body=message,
+            to=to
+        )
+        print('Twilio message success.')
+    except:
+        print('Twilio message fail.')
     
