@@ -2,15 +2,12 @@ from datetime import datetime
 
 from flask import Blueprint, request
 
-from quran_chatgpt.logger import logging
 from quran_chatgpt.helper.twilio_api import send_message
 from quran_chatgpt.helper.database_api import get_user, update_messages, create_user, update_user
 from quran_chatgpt.helper.conversation import create_conversation, get_name, get_email, get_consent, get_general_response
 from quran_chatgpt.helper.utils import get_context
 
 from config import config
-
-logger = logging.getLogger(__name__)
 
 twilio = Blueprint(
     'twilio',
@@ -21,7 +18,7 @@ twilio = Blueprint(
 @twilio.route('/receiveMessage', methods=['POST'])
 def receive_message():
     try:
-        logger.info('A new twilio request...')
+        print('A new twilio request...')
         data = request.form.to_dict()
         user_name = data['ProfileName']
         query = data['Body']
@@ -31,20 +28,17 @@ def receive_message():
         # get the user
         user = get_user(sender_id)
 
-        logger.info(f'Sender -> {sender_id}')
-        logger.info(f'Query -> {query}')
-
-        logger.info(f'User -> {user}')
+        print(f'Sender -> {sender_id}')
+        print(f'Query -> {query}')
 
         if user:
             if user['status'] == 'active':
                 context = get_context(user['messages'][-2:])
                 response = create_conversation(
                     query, context, user['userName'])
-                logger.info(f'Response -> {response}')
                 update_messages(sender_id, query,
-                                response['result'], user['messageCount'])
-                send_message(sender_id, response['result'])
+                                response, user['messageCount'])
+                send_message(sender_id, response)
             else:
                 properties = user['properties']
                 property = ''
@@ -128,10 +122,9 @@ def receive_message():
                     context = get_context(user['messages'][-2.:])
                     response = create_conversation(
                         query, context, user['userName'])
-                    logger.info(f'Response -> {response}')
                     update_messages(sender_id, query,
-                                    response['result'], user['messageCount'])
-                    send_message(sender_id, response['result'])
+                                    response, user['messageCount'])
+                    send_message(sender_id, response)
 
         else:
             response = config.CONSENT_MESSAGE
@@ -172,9 +165,9 @@ def receive_message():
             }
             create_user(user)
             send_message(sender_id, response)
-        logger.info('Request success.')
+        print('Request success.')
     except:
-        logger.info('Request failed.')
+        print('Request failed.')
         pass
 
     return 'OK', 200

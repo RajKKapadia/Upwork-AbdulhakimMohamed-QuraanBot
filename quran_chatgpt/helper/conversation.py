@@ -10,7 +10,7 @@ chat = ChatOpenAI(temperature=0.0, openai_api_key=config.OPENAI_API_KEY)
 def create_conversation(question: str, context: str, name: str) -> str:
     template_string = '''Consider yourself a highly conversational Muslim scholar \
         and refer to Tafsir Ibn Kathir or the Quran in your answer and please go into detail and ask questions back given context. \
-        If possible mention name of the user as {name}
+        refer to the user as {name} in the beggining of the answer. \
         {context} \
         Question: {question} \
     '''

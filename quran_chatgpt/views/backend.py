@@ -1,10 +1,7 @@
 from flask import Blueprint, request, jsonify
 
-from quran_chatgpt.logger import logging
 from quran_chatgpt.helper.conversation import create_conversation
 from quran_chatgpt.helper.utils import get_context
-
-logger = logging.getLogger(__name__)
 
 backend = Blueprint(
     'backend',
