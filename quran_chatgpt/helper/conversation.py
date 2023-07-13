@@ -144,3 +144,10 @@ def get_general_response(query: str) -> str:
     except:
         return config.ERROR_MESSAGE
     
+def chat_completion(messages: list) -> str:
+    try:
+        chat = ChatOpenAI(openai_api_key=config.OPENAI_API_KEY)
+        result = chat(messages)
+        return result.content
+    except:
+        return config.ERROR_MESSAGE
