@@ -16,11 +16,14 @@ twilio = Blueprint(
 )
 
 def combined_function(user: dict, query: str, user_name: str, sender_id: str) -> None:
-    messages = generate_messages(user['messages'][-2:], query, user_name)
-    response = chat_completion(messages)
-    update_messages(sender_id, query,
-                    response, user['messageCount'])
-    send_message(sender_id, response)
+    try:
+        messages = generate_messages(user['messages'][-2:], query, user_name)
+        response = chat_completion(messages)
+        update_messages(sender_id, query,
+                        response, user['messageCount'])
+        send_message(sender_id, response)
+    except:
+        send_message(sender_id, config.ERROR_MESSAGE)
 
 @twilio.route('/receiveMessage', methods=['POST'])
 def receive_message():
