@@ -1,11 +1,12 @@
 from datetime import datetime
+import threading
 
 from flask import Blueprint, request
 
 from quran_chatgpt.helper.twilio_api import send_message
 from quran_chatgpt.helper.database_api import get_user, update_messages, create_user, update_user
-from quran_chatgpt.helper.conversation import create_conversation, get_name, get_email, get_consent, get_general_response
-from quran_chatgpt.helper.utils import get_context
+from quran_chatgpt.helper.conversation import chat_completion, get_name, get_email, get_consent, get_general_response
+from quran_chatgpt.helper.utils import generate_messages
 
 from config import config
 
@@ -14,6 +15,12 @@ twilio = Blueprint(
     __name__
 )
 
+def combined_function(user: dict, query: str, user_name: str, sender_id: str) -> None:
+    messages = generate_messages(user['messages'][-2:], query, user_name)
+    response = chat_completion(messages)
+    update_messages(sender_id, query,
+                    response, user['messageCount'])
+    send_message(sender_id, response)
 
 @twilio.route('/receiveMessage', methods=['POST'])
 def receive_message():
@@ -33,12 +40,7 @@ def receive_message():
 
         if user:
             if user['status'] == 'active':
-                context = get_context(user['messages'][-2:])
-                response = create_conversation(
-                    query, context, user['userName'])
-                update_messages(sender_id, query,
-                                response, user['messageCount'])
-                send_message(sender_id, response)
+                threading.Thread(target=combined_function, args=[user, query, user_name, sender_id]).start()
             else:
                 properties = user['properties']
                 property = ''
@@ -119,13 +121,7 @@ def receive_message():
                             'status': 'active'
                         }
                     )
-                    context = get_context(user['messages'][-2.:])
-                    response = create_conversation(
-                        query, context, user['userName'])
-                    update_messages(sender_id, query,
-                                    response, user['messageCount'])
-                    send_message(sender_id, response)
-
+                    threading.Thread(target=combined_function, args=[user, query, user_name, sender_id]).start()
         else:
             response = config.CONSENT_MESSAGE
             message = {
