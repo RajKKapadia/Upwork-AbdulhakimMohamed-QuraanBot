@@ -6,7 +6,7 @@ from flask import Blueprint, request
 from quran_chatgpt.helper.twilio_api import send_message
 from quran_chatgpt.helper.database_api import get_user, update_messages, create_user, update_user
 from quran_chatgpt.helper.conversation import chat_completion, get_name, get_email, get_consent, get_general_response
-from quran_chatgpt.helper.utils import generate_messages
+from quran_chatgpt.helper.utils import generate_messages, create_string_chunks
 
 from config import config
 
@@ -19,9 +19,11 @@ def combined_function(user: dict, query: str, user_name: str, sender_id: str) ->
     try:
         messages = generate_messages(user['messages'][-2:], query, user_name)
         response = chat_completion(messages)
+        chunks = create_string_chunks(response, 1500)
         update_messages(sender_id, query,
                         response, user['messageCount'])
-        send_message(sender_id, response)
+        for chunk in chunks:
+            send_message(sender_id, chunk)
     except:
         send_message(sender_id, config.ERROR_MESSAGE)
 
