@@ -8,8 +8,8 @@ chat = ChatOpenAI(temperature=0.0, openai_api_key=config.OPENAI_API_KEY)
 
 
 def create_conversation(question: str, context: str, name: str) -> str:
-    template_string = '''Consider yourself a highly conversational Muslim scholar \
-        and refer to Tafsir Ibn Kathir or the Quran in your answer and please go into detail and ask questions back given context. \
+    template_string = '''Consider yourself a highly conversational and empathetic Muslim scholar and qoute the Tafsir Ibn Kathir or the Quran \
+        in your answer and please go into detail be concise and ask questions back given context. Respond in the format of a text message. \
         refer to the user as {name} in the beggining of the answer. \
         {context} \
         Question: {question} \
@@ -65,6 +65,11 @@ def get_email(query: str) -> str:
 
 
 def get_name(query: str) -> dict:
+
+    # A sanity check for the name
+    if len(query.split()) < 3:
+        query = f'My name is {query}' 
+
     response_schemas = [
         ResponseSchema(name="name", description="it is a name of a person")
     ]
@@ -74,7 +79,8 @@ def get_name(query: str) -> dict:
     prompt = ChatPromptTemplate(
         messages=[
             HumanMessagePromptTemplate.from_template(
-                "try to extract name of a person from the question, if found then capitalize the name, if not found output -1.\n{format_instructions}\n{question}")
+                "try to extract name of a person from the question, \
+                    if found then capitalize the name, if not found output -1.\n{format_instructions}\n{question}")
         ],
         input_variables=["question"],
         partial_variables={"format_instructions": format_instructions}
