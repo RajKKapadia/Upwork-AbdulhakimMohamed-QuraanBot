@@ -1,5 +1,6 @@
 from datetime import datetime
 import threading
+import time
 
 from flask import Blueprint, request
 
@@ -24,6 +25,7 @@ def combined_function(user: dict, query: str, user_name: str, sender_id: str) ->
                         response, user['messageCount'])
         for chunk in chunks:
             send_message(sender_id, chunk)
+            time.sleep(1)
     except:
         send_message(sender_id, config.ERROR_MESSAGE)
 
